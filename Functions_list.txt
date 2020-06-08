@@ -1,0 +1,267 @@
+
+NOTE
+All functions below, which take the section from the loaded ini file, return the section with all empty lines removed.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+												>>>>>>>>>> Basic functions <<<<<<<<<<
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+_IniLoadToMemory("full path to the INI file.ini")
+; it loads INI into memory, and returns the $ini_memory structure, without it or _IniCreateInMemory the rest functions doesn't works
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - empty $ini_memory structure is returned
+; @error = 0 and @extended = -1 - loaded $ini_memory structure is returned, but encoding was not detected
+; @error = 0 and @extended = detected file encoding (zero or greater) for FileOpen - loaded $ini_memory structure is returned
+
+
+_IniCreateInMemory( [$ini_file_encoding = 0] )
+; it creates new INI in memory, and returns the $ini_memory structure, without it or _IniLoadToMemory the rest functions doesn't works
+;
+;the $ini_file_encoding can be one of:
+; 0 means ANSI (default) - no encoding conversion
+; 1 means UTF16 Little Endian
+; 2 means UTF16 Big Endian
+; 3 means UTF8
+; it returns empty $ini_memory structure, but retun parameters depends of _IniSetEncoding
+;or one of:
+; ANSI means ANSI (default) - no encoding conversion
+; UTF16LE means UTF16 Little Endian
+; UTF16BE means UTF16 Big Endian
+; UTF8 means UTF8
+; it returns empty $ini_memory structure, but retun parameters depends of _IniSetEncodingString
+;
+;in all other cases it returns empty $ini_memory structure, @error = 0, @extended = 0 means default ANSI encoding
+
+
+_IniSetEncoding( $ini_memory form _IniLoadToMemory or _IniCreateInMemory[, $new_file_encoding = 0] )
+; it changes the encoding of saving it to a file
+;$new_file_encoding can be one of:
+; 0 means ANSI (default) - no encoding conversion
+; 1 means UTF16 Little Endian
+; 2 means UTF16 Big Endian
+; 3 means UTF8
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad, and is returned
+; @error = 1 and @extended = -1 - value of $new_file_encoding is bad, $ini_memory structure is returned
+; @error = 0 and @extended = FileOpen encoding (zero or greater) - modified $ini_memory structure is returned
+
+
+_IniGetEncoding($ini_memory form _IniLoadToMemory or _IniCreateInMemory)
+; it changes the encoding of saving it to a file
+;return of tis function can be one of:
+; -1 means ERROR
+; 0 means ANSI (default) - no encoding conversion
+; 1 means UTF16 Little Endian
+; 2 means UTF16 Big Endian
+; 3 means UTF8
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), -1 is returned
+; @error = 1 and @extended = -1 - value of $ini_memory encoding is bad (means error), -1 is returned
+; @error = 0 and @extended = FileOpen encoding (zero or greater) - 0, 1, 2 or 3 is returned
+
+
+_IniGetEncodingString($ini_memory form _IniLoadToMemory or _IniCreateInMemory)
+; it returns current file encoding as string
+;return of tis function can be one of:
+; empty string means ERROR
+; ANSI means ANSI (default) - no encoding conversion
+; UTF16LE means UTF16 Little Endian
+; UTF16BE means UTF16 Big Endian
+; UTF8 means UTF8
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), empty string is returned
+; @error = 1 and @extended = -1 - value of $ini_memory encoding is bad (means error), empty string is returned
+; @error = 0 and @extended = FileOpen encoding (zero or greater) - ANSI, UTF16LE, UTF16BE or UTF8 is returned
+
+
+_IniSetEncodingString( $ini_memory form _IniLoadToMemory or _IniCreateInMemory[, $new_file_encoding = "ANSI"] )
+; it changes the encoding of saving it to a file
+;$new_file_encoding can be one of:
+; ANSI means ANSI (default) - no encoding conversion
+; UTF16LE means UTF16 Little Endian
+; UTF16BE means UTF16 Big Endian
+; UTF8 means UTF8
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), and is returned
+; @error = 1 and @extended = -1 - value of $new_file_encoding is bad (means error), $ini_memory structure is returned
+; @error = 0 and @extended = FileOpen encoding (zero or greater) - modified $ini_memory structure is returned
+
+
+_IniEnumSections($ini_memory from _IniLoadToMemory or _IniCreateInMemory)
+; like a IniReadSectionNames
+; it returns Array of found section(s)
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), Array lenght 1 is returned, Array[0] is empty
+; @error = non zero and @extended = ? - section(s) not found, Array length is 1, Array[0] is empty
+; @error = 0 and @extended = 0 - section(s) found, Array length is greater than zero
+
+
+_IniEnumSectionKeys($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name")
+; it returns Array of found key(s) in section
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), Array length is 1, Array[0] is empty
+; @error = 1 and @extended = 0 - section is empty, Array length is 1, Array[0] is empty
+; @error = 0 and @extended = number of keys found - Array length is is equal to the @extended-1 value
+
+
+_IniGetValue($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name", "key name", "default_value if key doesn't exists")
+; like a IniRead
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), $default value is returned
+; @error = 1 and @extended = 0 - $default_value is returned
+; @error = 0 and @extended = line number of section - the value of the key is returned
+
+
+_IniClearKeyOrValue("key or value as string")
+; It cleans the result key name or key value from double-quotes or semicolon
+;@error and @extended of this function means:
+; @error = -1 and @extended = 0 - double-ques or semicolon does not found, $key_or_value_string returned
+; @error = 1 and @extended = -1 - one double-quote found, but not removed, $key_or_value_string returned
+; @error = 0 and @extended = 2 - double-quotes found and the string was fetched between them
+; @error = 0 and @extended = 1 - the first semicolon was found and the rest was removed along with it
+
+
+_IniSetValue($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name", "key name", "value name")
+; like a IniWrite, or like a IniDelete if the $value_name is empty
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), and $ini_memory is returned
+; @error = 1 and @extended = -1 $key_name is empty, $ini_memory is returned without changes
+; @error = 1 and @extended = 0 if $value_name is empty it means the $key_name does not found, $ini_memory is returned without changes
+; @error = 0 and @extended = -1 the $key_name does not exists in the section - added, updated $ini_section is returned
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
+
+
+_IniDeleteKey($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name", "key name")
+; like a IniDelete
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), and $ini_memory is returned
+; @error = 1 and @extended = -1 $key_name is empty, $ini_memory is returned without changes
+; @error = 1 and @extended = 0 if $value_name is empty it means the $key_name does not found, $ini_memory is returned without changes
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
+
+
+_IniRenameSection($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "current section name", "new section name")
+; like a IniRenameSection
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), and it is returned
+; @error = 1 and @extended = 1 - the $new_section_name exists in the current $ini_memory, the $current_section_name can't be renamed, original $ini_memory structure is returned
+; @error = non zero and @extended = ? - original $ini_memory structure is returned
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
+
+
+_IniGetSection($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name")
+; it gets section as string, other way new empty section is returned
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), empty string is returned
+; @error = 0 and @extended = -1 - section not found, returned new empty section
+; @error = 0 and @extended = 1 - section found and returned
+
+
+_IniAddSection($ini_memory from _IniLoadToMemory or _IniCreateInMemory, $new_section form _IniInternalGetSection)
+; like a IniWriteSection
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), $ini_memory is returned
+; @error = other than 0 and @extended = ? - original $ini_memory structure is returned
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
+
+
+_IniDeleteSection($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "section name")
+; like a IniDelete
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), $ini_memory is returned
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
+
+
+_IniGetMemory($ini_memory from _IniLoadToMemory or _IniCreateInMemory)
+; it returns $ini_file_memory from $ini_memory structure as string
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), empty string is returned
+; @error = 0 and @extended = 0 - $ini_file_memory is returned
+
+
+_IniMemorySaveToFile($ini_memory from _IniLoadToMemory or _IniCreateInMemory, "ini file name to save.ini")
+; it saves the $ini_memory structure back to a file, the result file will be overwritten
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error)
+; @error = 1 and @extended = non-zero - can't open the $ini_file_name for writing
+; @error = 0 and @extended = 0 - operation sucessfull, $ini_file_name is returned
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+											>>>>>>>>>> Advanced functions <<<<<<<<<<
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+_IniInternalEnumSections($ini_file_memory from _IniGetMemory)
+; it returns Array of section name(s)
+;@error and @extended of this function means:
+; @error = non zero and @extended = ? - section(s) not found, Array length is 1, Array[0] is empty
+; @error = 0 and @extended = 0 - section(s) found, Array length is greater than zero
+
+
+_IniInternalEnumSectionKeys($ini_section from _IniInternalGetSection)
+; it returns Array of section key(s) name(s)
+;@error and @extended of this function means:
+; @error = 1 and @extended = 0 - section is empty, Array length is 1, Array[0] is empty
+; @error = 0 and @extended = number of keys found - Array length is is equal to the @extended-1 value
+
+
+_IniInternalGetKeyValue($ini_section from _IniInternalGetSection, "key to read", "default_value if key doesn't exists")
+; it returns the value of key from given section, if the key does not exists default value is returned and @error = -1
+;@error and @extended of this function means:
+; @error = 1 and @extended = 0 - $default_value returned
+; @error = 0 and @extended = line number where the key was found - the value of the key is returned
+
+
+_IniInternalGetSection($ini_file_memory from _IniGetMemory, "INI section name to read")
+; it returns section as string
+;@error and @extended of this function means:
+; @error = 0 and @extended = -1 - section not found, returned new empty section
+; @error = 0 and @extended = 1 - section found and returned
+
+
+_IniInternalChangeSection($ini_section from _IniInternalGetSection, "key_name to find", "value_name to change or add")
+; it set/change the value of key, or delete the key if value is empty
+;@error and @extended of this function means:
+; @error = 1 and @extended = -1 $key_name is empty, $ini_section returned without changes
+; @error = 1 and @extended = 0 if $value_name is empty it means the $key_name does not found, $ini_section returned without changes
+; @error = 0 and @extended = -1 the $key_name does not exists in the section - added, updated $ini_section is returned
+; @error = 0 and @extended = 0 updated $ini_section is returned
+
+
+_IniInternalSectionSetValue($ini_section from _IniInternalGetSection, "key_name to find", "value_name to set/change")
+; alias _IniInternalChangeSection($ini_section, $key_name, $value_name)
+
+
+_IniInternalSectionDeleteKey($ini_section from _IniInternalGetSection, "key_name to delete")
+; alias _IniInternalChangeSection($ini_section, $key_name, "")
+
+
+_IniInternalUpdateSections($ini_file_memory from _IniGetMemory, $current_section form _IniInternalGetSection, $new_section form _IniInternalGetSection)
+; It can be used to add, change, or delete section. For delete set third parameter empty ($new_section)
+;@error and @extended of this function means:
+; @error = other than 0 and @extended = 0 - original $ini_file_memory structure is returned
+; @error = 0 and @extended = 0 - updated $ini_file_memory structure is returned
+
+
+_IniInternalAddSection($ini_file_memory from _IniGetMemory, $new_section form _IniInternalGetSection)
+; alias _IniInternalUpdateSections
+
+
+_IniInternalRenameSection($ini_sections from _IniGetMemory or from _IniInternalGetSection, "current section name", "new section name")
+; like a IniRenameSection, but for the set of section(s) as string
+;@error and @extended of this function means:
+; @error = 1 and @extended = 1 - the $new_section_name exists in the current set of section(s), the $current_section_name can't be renamed, original $ini_sections is returned
+; @error = non zero and @extended = ? - original $ini_sections is returned
+; @error = 0 and @extended = 0 - updated $ini_sections is returned
+
+
+_IniInternalDeleteSection($ini_file_memory from _IniGetMemory, $ini_section from _IniInternalGetSection)
+; alias _IniInternalUpdateSections($ini_file_memory, $ini_section, "")
+
+
+_IniInternalUpdateFileInMemory($ini_memory from _IniLoadToMemory or _IniCreateInMemory, $ini_file_memory from _IniGetMemory)
+; updates $ini_memory structure with $ini_file_memory
+;@error and @extended of this function means:
+; @error = -1 and @extended = -1 - $ini_memory structure is bad (means error), original $ini_memory is returned
+; @error = 0 and @extended = 0 - updated $ini_memory structure is returned
