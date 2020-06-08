@@ -1,0 +1,1 @@
+# Fast-INI-in-memory-for-AutoIT
