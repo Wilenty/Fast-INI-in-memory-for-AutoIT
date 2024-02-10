@@ -1,3 +1,9 @@
+#  Fast INI in memory for AutoIT
+
+[![Latest Version](https://img.shields.io/github/release/Wilenty/Fast-INI-in-memory-for-AutoIT.svg)](https://github.com/Wilenty/Fast-INI-in-memory-for-AutoIT/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/Wilenty/Fast-INI-in-memory-for-AutoIT/total.svg)](https://github.com/Wilenty/Fast-INI-in-memory-for-AutoIT/releases)
+[![Latest Release Downloads](https://img.shields.io/github/downloads/Wilenty/Fast-INI-in-memory-for-AutoIT/latest/total.svg)](https://github.com/Wilenty/Fast-INI-in-memory-for-AutoIT/releases/latest)
+
 If you like my work, please support me.<br>
 <br>
 The idea to create this library came because AutoIT ini functions operates on ini file (which is slow), it means that the AutoIT ini functions reads and writes the ini file in every change.<br>
